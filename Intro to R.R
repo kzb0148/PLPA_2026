@@ -47,5 +47,4 @@ zdf$zsquared[180]
 Tips <- read.csv("Data/TipsR.csv", na.strings = ".")
 head (Tips)
 summary(Tips)
-
-
+View(Tips)
