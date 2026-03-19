@@ -8,14 +8,32 @@ output:
 
 ---
 
+Load library
+
+``` r
+library(tidyverse)
+```
+
+```
+## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.6
+## ✔ forcats   1.0.1     ✔ stringr   1.6.0
+## ✔ ggplot2   4.0.1     ✔ tibble    3.3.1
+## ✔ lubridate 1.9.4     ✔ tidyr     1.3.2
+## ✔ purrr     1.2.1     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+```
 
 ###1.	3 pts. Download two .csv files from Canvas called DiversityData.csv and Metadata.csv, and read them into R using relative file paths.
 
 
 
 ``` r
-DiversityData.csv <- read.csv("DiversityData.csv")
-Metadata.csv <- read.csv("Metadata.csv")
+DiversityData <- read.csv("DiversityData.csv")
+Metadata <- read.csv("Metadata.csv")
 ```
 
 
@@ -24,12 +42,26 @@ Metadata.csv <- read.csv("Metadata.csv")
 ###2.	4 pts. Join the two dataframes together by the common column ‘Code’. Name the resulting dataframe alpha.
 
 
+``` r
+alpha <- left_join(Metadata, DiversityData, by = "Code")
+colnames(alpha)
+```
+
+```
+## [1] "Code"          "Crop"          "Time_Point"    "Replicate"    
+## [5] "Water_Imbibed" "shannon"       "invsimpson"    "simpson"      
+## [9] "richness"
+```
 
 
 
 ###3.	4 pts. Calculate Pielou’s evenness index: Pielou’s evenness is an ecological parameter calculated by the Shannon diversity index (column Shannon) divided by the log of the richness column. 
 
 
+``` r
+alpha_even <- alpha %>%
+  mutate(even = shannon / log(richness))
+```
 ###a.	Using mutate, create a new column to calculate Pielou’s evenness index. 
 ##3b.	Name the resulting dataframe alpha_even.
 
@@ -41,6 +73,19 @@ Metadata.csv <- read.csv("Metadata.csv")
 ##c.	Summarize the data: Calculate the mean, count, standard deviation, and standard error for the even variable within each group.
 ##d.	Name the resulting dataframe alpha_average
 
+``` r
+alpha_average <- alpha_even %>%
+  group_by(Crop, Time_Point) %>%
+  summarise(mean.even = mean(even),
+            n = n(),
+            sd.dev = sd(even)) %>%
+  mutate(std.err = sd.dev / sqrt(n))
+```
+
+```
+## `summarise()` has grouped output by 'Crop'. You can override using the
+## `.groups` argument.
+```
 
 
 
@@ -51,6 +96,13 @@ Metadata.csv <- read.csv("Metadata.csv")
 ###d.	Calculate differences: Create new columns named diff.cotton.even and diff.soybean.even by calculating the difference between Soil and Cotton, and Soil and Soybean, respectively.
 ###e.	Name the resulting dataframe alpha_average2
 
+``` r
+alpha_average2 <- alpha_average %>%
+  select(Time_Point, Crop, mean.even) %>%
+  pivot_wider(names_from = Crop, values_from = mean.even) %>%
+  mutate(diff.cotton.even = Soil - Cotton,
+         diff.soybean.even = Soil - Soybean)
+```
 
 ###6.	4 pts. Connecting it to plots
 ###a.	Start with the alpha_average2 dataframe
@@ -63,8 +115,22 @@ Metadata.csv <- read.csv("Metadata.csv")
 ###d.	Create the plot: Use ggplot and geom_line() with ‘Time_Point’ on the x-axis, the column ‘values’ on the y-axis, and different colors for each ‘diff’ category. The column named ‘values’ come from the pivot_longer. The resulting plot should look like the one to the right. 
 
 
+``` r
+alpha_average2 %>%
+  select(Time_Point, diff.cotton.even, diff.soybean.even) %>%
+  pivot_longer(c(diff.cotton.even, diff.soybean.even), names_to = "diff") %>%
+  ggplot(aes(x = Time_Point, y = value, color = diff, group = diff)) +
+  geom_line() +
+  theme_minimal() +
+  xlab("Time (hrs)") +
+  ylab("Difference from soil in Pielou's evenness")
+```
+
+![](Coding_Challenge_5_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 ###7.	2 pts. Commit and push a gfm .md file to GitHub inside a directory called Coding Challenge 5. Provide me a link to your github written as a clickable link in your .pdf or .docx
+
+
 
 
 
