@@ -230,6 +230,7 @@ head(distance_df)
 
 ###8.	1 pts. Commit and push a gfm .md file to GitHub inside a directory called Coding Challenge 6. Provide me a link to your github written as a clickable link in your rendered .pdf, .docx, or .html
 
+https://github.com/kzb0148/PLPA_2026/tree/main/Coding%20challenge%206
 
 
 
