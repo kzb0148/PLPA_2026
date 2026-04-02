@@ -1,5 +1,5 @@
 ---
-title: "Coding_challenge6"
+title: "Coding_challenge7"
 author: "Kiranmayee"
 date: "2026-03-19"
 output: 
@@ -271,7 +271,7 @@ install.packages("multcompView", repos = "https://cloud.r-project.org")
 ## package 'multcompView' successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-## 	C:\Users\kzb0148\AppData\Local\Temp\RtmpMHqPta\downloaded_packages
+## 	C:\Users\kzb0148\AppData\Local\Temp\Rtmpo1ILWz\downloaded_packages
 ```
 
 ``` r
